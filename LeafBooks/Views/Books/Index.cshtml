@@ -1,0 +1,128 @@
+﻿@model LeafBooks.DTO.ProfileBook
+
+<body id="id_body" style="background-image: url('@Url.Content("~/img/Books/Background/testeBack.png")');">
+    <div style="width:100%; position:absolute ;display:flex; justify-content:center;  top:57px; left:0px;overflow-x: hidden; background-color:#222222;box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;">
+        <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    @if (ViewBag.login == "Jujuba")
+                    {
+                        <img src="~/img/Books/Design sem nome (73).png" class="d-block w-100" alt="...">
+                    }
+                    else
+                    {
+                        <img src="~/img/Books/Design sem nome (74).png" class="d-block w-100" alt="...">
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row gap-4" id="divBooks" style="margin-top:22%;margin-bottom:10%;display:inline-flex;width:70%;margin-left:14.5%; background-color:#FDF3DD;padding:60px;border-radius:7px;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;"></div>
+
+    <aside class="sidebar">
+        <nav>
+            <div style="width:100%;height:1030px;margin-top:15%;">
+                <div style="margin-left:14px;margin-top:13rem;">
+                    <i class="fa fa-bookmark bookFilter" id="id_lidos" name="etiquetaBook" onclick="openBookEtiqueta(1,this.id)" title="Lidos" style="width:35px;height:30px;margin-bottom:70px;cursor:pointer"></i>
+                    <i class="fa fa-heart bookFilter" id="id_qroLer" name="etiquetaBook" onclick="openBookEtiqueta(2,this.id)" title="Quero ler" style="width:35px;height:30px;margin-bottom:70px;cursor:pointer"></i>
+                    <i class="fa fa-book-open bookFilter" id="id_lendo" name="etiquetaBook" onclick="openBookEtiqueta(3,this.id)" title="Lendo" style="width:35px;height:30px;margin-bottom:70px;cursor:pointer"></i>
+                    <i class="fa fa-hand-holding-heart bookFilter" id="id_dsj" title="Desejo" style="width:35px;height:30px;margin-bottom:70px"></i>
+                    <i class="fa fa-book-bookmark bookFilter" id="id_tenho" title="Tenho" style="width:35px;height:30px;margin-bottom:70px"></i>
+                    <i class="fa fa-spa bookFilter" id="id_metaLtr" title="Meta de leitura" style="width:35px;height:30px;margin-bottom:70px"></i>
+                </div>
+            </div>
+        </nav>
+    </aside>
+
+    
+</body>
+
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+<script>
+    $(document).ready(function () {
+        var formData = new FormData();
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialIndexBooks", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $("#divBooks").html(result);
+                }
+            });
+    });
+    $(document).on("click", ".pagination a", function (e) {
+        e.preventDefault();
+        var url = $(this).attr("href");
+        $("#divBooks").load(url);
+    });
+    function openBookEtiqueta(categoria, id) {
+        var elementosPeloNome = document.querySelectorAll('[name="etiquetaBook"]');
+        for (var i = 0; i < elementosPeloNome.length; i++) {
+            document.querySelector("#" + elementosPeloNome[i].id + "").style.color = "white";
+        }
+        document.querySelector("#" + id + "").style.color = "#f1af09";
+
+        var formData = new FormData();
+        formData.append("categoria", categoria);
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialIndexBooks", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $('#divBooks').animate({ marginLeft: '-100%' }, 300, function () {
+                        $(this).html(result).css('margin-left', '14.5%').animate({ marginLeft: '14.5%' }, 300);
+                    });
+                }
+            });
+
+    }
+    function ajustarLarguraDaTela() {
+        var book = document.querySelector("#divBooks");
+
+        if (window.innerWidth <= 2000) {
+            book.style.marginTop = "22%"
+        } else {
+            book.style.marginTop = "28%"
+        }
+    }
+    window.addEventListener('resize', ajustarLarguraDaTela);
+    ajustarLarguraDaTela();    
+</script>
+
+
+<style>
+    .sidebar {
+        width: 4rem;
+        height: 100%;
+        top: 0px;
+        position: fixed;
+        left: 0rem;
+        z-index: 2;
+        overflow-x: hidden;
+        overflow-y: hidden;
+        transition: all .8s;
+        box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.582);
+        background-image: url('@Url.Content("~/img/Books/Background/backgroundIndexSide.png")');
+    }
+
+    .show-menu .sidebar {
+        left: 0rem;
+    }
+
+    .bookFilter {
+        color: white;
+    }
+
+        .bookFilter:hover {
+            cursor: pointer;
+            color: #f1af09;
+        }
+</style>

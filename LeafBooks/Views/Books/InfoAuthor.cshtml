@@ -1,0 +1,89 @@
+﻿@model LeafBooks.DTO.BooksDTO.Temperatures
+
+
+<body style="background-image:url('@Url.Content("~/img/Books/Background/backLivro.png")');">
+    <div style="width:100%;height:1070px;background-color:#FDF3DD;margin-top:3%;border-top-left-radius:8px;border-top-right-radius:8px;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+        <div class="row justify-content-center" style="display:inline-block;margin-top:3%;border-bottom:1px solid #d3d3d3;">
+            <div style="display:flex;margin-left:14%;">
+                @if (ViewBag.AutorInfo.imagem != "")
+                {
+                    <div style="background-image:url(@ViewBag.AutorInfo.imagem);min-height:150px;min-width:150px;border-radius:50%; border:1px solid blue;background-repeat:no-repeat;background-size:cover">
+                    </div>
+                }
+                else
+                {
+                    <div style="background-repeat:no-repeat;background-size:cover">
+                        <img src="~/img/Books/notAut.gif" style="min-height:150px;min-width:150px;border-radius:50%; border:1px solid blue;">
+                    </div>
+                }
+
+                <div style="display:block;">
+                    <p style="color:black;font-size:17px;margin-left:15px;margin-top:20px;overflow:hidden; text-overflow:ellipsis;display: -webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;max-width:65%;text-align: justify">@ViewBag.AutorInfo.descricao</p>
+                </div>
+            </div>
+            <div style="max-width:11.8%;margin-left:14%;">
+                <p style="font-weight:bold;margin-left:15px;margin-top:5px;text-align:center">@Model.Items[0].VolumeInfo.Authors[0]</p>
+            </div>
+        </div>
+
+        <div class="row justify-content-center gap-4" style="margin-top:3%;display:inline-flex;width:70%;margin-left:14.5%;">
+            <p style="font-size:24px;text-align:center">Obras de @Model.Items[0].VolumeInfo.Authors[0]</p>
+            @foreach (var item in Model.Items)
+            {
+                if (item.VolumeInfo.ImageLinks != null)
+                {
+                    <div class="books" onclick="OpenBook('@item.Id')" title="@item.VolumeInfo.Title" style="width:130px; height:189px; background-image:url(@item.VolumeInfo.ImageLinks.Thumbnail); background-size:cover; background-repeat:no-repeat;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; border:none;">
+                    </div>
+                }
+                else
+                {
+                    <div class="books" onclick="OpenBook('@item.Id')" title="@item.VolumeInfo.Title" style="width:130px; height:189px; background-image:url('@Url.Content("~/img/Books/Book.gif")'); background-size:cover; background-repeat:no-repeat;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; border:none;">
+                    </div>
+                }
+            }
+        </div>
+
+        <nav style="margin-left:38%; margin-top:40px">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" onclick="nextPage(0)" href="#">1</a></li>
+                @for (int i = 1; i <= 4; i++)
+                {
+                    int a = i + 1;
+                    <li class="page-item"><a class="page-link" onclick="nextPage(@i)" href="#">@a</a></li>
+                }
+                <li class="page-item">
+                    <a class="page-link">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>  
+</body>
+
+<script>
+    function OpenBook(id) {
+        window.location.href = '@Url.Action("pageBook", "Books")?id=' + id;
+    }
+    function nextPage(page){
+        var name = '@ViewBag.autor';
+        window.location.href = '@Url.Action("InfoAuthor", "Books")?nome=' + name + '&paginas=' + page;
+    }
+</script>
+
+<style>
+    .books:hover {
+        cursor: pointer;
+        -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        transform: scale(1.1);
+    }
+</style>
+

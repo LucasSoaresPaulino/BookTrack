@@ -1,0 +1,26 @@
+﻿@model LeafBooks.DTO.BooksIndex
+
+@if (Model.situacao == 0)
+{
+    <i class="fa-regular fa-bookmark" id="bookmark" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',1)" style="width:40px;height:25px;"></i>
+    <i class="fa-regular fa-heart" id="heart" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',2)" style="width:40px;height:25px;"></i>
+    <i class="fa fa-book-open" id="bookOpen" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',3)" style="width:40px;height:25px"></i>
+}
+@if (Model.situacao == 1)
+{
+    <i class="fa fa-bookmark" id="bookmark" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',1)" style="width:40px;height:25px;color:#f1af09"></i>
+    <i class="fa-regular fa-heart" id="heart" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',2)" style="width:40px;height:25px"></i>
+    <i class="fa fa-book-open" id="bookOpen" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',3)" style="width:40px;height:25px"></i>
+}
+@if (Model.situacao == 2)
+{
+    <i class="fa-regular fa-bookmark" id="bookmark" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',1)" style="width:40px;height:25px"></i>
+    <i class="fa fa-heart" id="heart" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',2)" style="width:40px;height:25px;color:#ff3232"></i>
+    <i class="fa fa-book-open" id="bookOpen" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',3)" style="width:40px;height:25px"></i>
+}
+@if (Model.situacao == 3)
+{
+    <i class="fa-regular fa-bookmark" id="bookmark" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',1)" style="width:40px;height:25px"></i>
+    <i class="fa-regular fa-heart" id="heart" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',2)" style="width:40px;height:25px"></i>
+    <i class="fa fa-book-open" id="bookOpen" onclick="saveBooks('@ViewBag.Info[0]','@ViewBag.Info[2]','@ViewBag.Info[3]','@ViewBag.Info[4]',3)" style="width:40px;height:25px;color:#8b008b"></i>
+}

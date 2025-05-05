@@ -1,0 +1,58 @@
+﻿@model X.PagedList.IPagedList<LeafBooks.DTO.ProfileBook>
+@using X.PagedList
+@using X.PagedList.Mvc.Bootstrap4.Core
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+@foreach(var item in Model)
+{
+    string id = "id_Book" + item.idBook;
+
+    <div class="" onmouseover="openIconLido('@item.idBook')" onmouseleave="exitIconLido('@item.idBook')" style="width:130px; height:189px;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+        @if (item.imagem != "")
+        {
+            <img class="books" onclick="OpenBook('@item.idBook')" src="@item.imgBook" style="width:130px; height:189px;margin-left:-12px">
+        }
+        else
+        {
+            <img class="books" onclick="OpenBook('@item.idBook')" src="/img/Books/Book.gif" style="width:130px; height:189px;">
+        }
+        <i class="fa fa-circle-check" id="@id" onclick="livroLido('@item.idBook')" style="transform:translate(270%,-620%);color:lawngreen;width:30px;height:30px;display:none;position:absolute;cursor:pointer"></i>
+    </div>
+}
+
+<div class="" style="position:relative;transform:translate(42.5%,20%)">
+    <div>
+        @Html.PagedListPager(Model,page => Url.Action("_PartialMetaBooks", new {pagina = page}), Bootstrap4PagedListRenderOptions.Classic)
+    </div>
+</div>
+
+<script>
+    function openIconLido(id) {
+        var div = document.querySelector("#id_Book" + id + "");
+        if (div.style.display === "none") {
+            div.style.display = "inline-flex"
+        }
+    }
+    function exitIconLido(id) {
+        var div = document.querySelector("#id_Book" + id + "");
+        if (div.style.display === "inline-flex") {
+            div.style.display = "none"
+        }
+    }
+    function livroLido(id){
+        var formData = new FormData();
+        formData.append("id", id);
+
+        $.ajax(
+            {
+                url: '@Url.Action("livroLido", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                }
+            });
+    }
+</script>

@@ -1,0 +1,247 @@
+﻿@model LeafBooks.DTO.ProfileBook
+
+<div style="width:100%; height:70px; background-color: rgba(0,0,0,.5);  position:absolute; top:57px; left:0px;box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;z-index:2;">
+    <div class="justify-content-center">
+        <input type="text" id="id_searchBooks" placeholder="Search..." style="box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+        <button type="submit" onclick="srcBooks()">
+            <i class="fa fa-search"
+               aria-hidden="true"></i>
+        </button>
+    </div>
+    <div style="position:absolute; left:86%;background-color:#262c36; border-radius:5px; margin-top:-45px; height:45px;">
+        <a asp-area="" asp-controller="Books" asp-action="Profile">
+            <img src="data:image /png;base64,@Model.imagem" width="47px" height="45;" />
+        </a>
+        <button class="btn" onclick="openAccountSetting()" style="background-color:#262c36;position:absolute;border-radius:0px;left:97px"><i class="fa fa-chevron-down" style="color:white;margin-left:-8px"></i></button>
+    </div>
+    <div id="divAccountSetting" style="display:none;position:absolute;left:85.5%;background-color:#262c36;margin-top:1px; height:130px">
+        <div>
+            <a asp-area="" asp-controller="Books" asp-action="Profile">
+                <p style="color:white; padding:5px">Ir para o perfil</p>
+            </a>
+        </div>
+        <div>
+            <p onclick="$('#modalAccount').modal('show')" style="color:white; padding:5px;cursor:pointer">Alterar conta</p>
+        </div>
+        <div>
+            <p onclick="changeAccount(null)" style="color:white; padding:5px">Sair</p>
+        </div>
+    </div>
+</div>
+
+<div style="width:100%; position:absolute ;display:flex; justify-content:center;top:57px;left:0px;overflow-x: hidden; background-color:#222222;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;height:230px;overflow-y: hidden;">
+    <div id="carouselExample" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="~/img/Books/Design sem nome (73).png" class="d-block w-100" alt="...">
+            </div>
+
+            <div class="carousel-item">
+                <img src="~/img/Books/Design sem nome (74).png" class="d-block w-100" alt="...">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div onmouseover="openDivEdit()" onmouseleave="exitDivEdit()">
+    <div class="row justify-content-center"  style="margin-top:20%;position:relative;">
+        <div class="row justify-content-center" style="display:inline-flex;margin-left:-75%">
+            <div style="position:absolute;max-width:14%; min-height:170px;background-image:url('data:image /png;base64,@Model.imagem');background-size:cover;margin-top:-6.5%">
+                <i class="fa fa-pen-to-square" id="id_changeImg" onclick="$('#id_imgProfile').click()" style="color:white;width:50px;height:100px; margin-left:35%;cursor:pointer;display:none"></i>
+                <input type="file" id="id_imgProfile" onchange="saveImgProfile(this.id)" style="display:none" />
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center" style="width:100%; height:1200px;background-color:blue;border-bottom-left-radius:5px;border-bottom-right-radius:5px">
+    <div style="position:relative;transform:translate(22%,5%);color:white;font-size:25px">
+        <p style="white-space:nowrap;font-weight:bold">@Model.nome</p>
+    </div>
+    <div onclick="OpenViewAuthors()" style="background-color:violet;height:38px;max-width:12%;transform:translate(580%,-85%);cursor:pointer">
+        <p style="white-space:nowrap;font-weight:bold">Autores</p>
+    </div>
+
+    <div style="background-color:violet;height:38px;max-width:12%;transform:translate(580%,-85%);margin-left:15px">
+    </div>
+
+    <div style="background-color:violet;height:290px;max-width:41%;position:relative;transform:translate(-34.3%,35%)">
+        <div style="width:50%;">
+            <img src="@Model.imgBook" width="170px" height="220px" style="margin-left:20px;margin-top:15px" />
+            <p style="color:#222222;font-weight:bold ;margin-left:50px;margin-top:5px;font-size:19px;white-space:nowrap;white-space:nowrap;max-width:52.5ch;overflow: hidden;">Ultimo lido</p>
+            
+            <div style="background-color:red;margin-top:-105%;margin-left:120% ">
+                <p style="white-space:nowrap;">total de livros lidos</p>
+                <p style="margin-left:42px;margin-top:-10px;font-weight:bold;font-size:19px">200</p>
+            </div>
+            <div style="transform:translate(124.5%,170%);">
+                <p style="white-space:nowrap;left:500px;margin-top:-12px">Lidos em 2023</p>
+                <p style="margin-left:42px;margin-top:-10px;font-weight:bold;font-size:19px;margin-left:38px">14</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <div style="background-color:violet;height:289px;max-width:31%;position:relative;transform:translate(-35%,35%)">
+        <div style="position:absolute;background-color:aquamarine; height:200px; width:80%;left:9.5%;top:15%">
+            <div id="id_partialFrase">
+                
+            </div>
+        </div>
+    </div>
+
+    <div class="row justify-content-center" style="margin-top:9%">
+        <div class="row justify-content-center" style="width:76.5%; height:580px;background-color:yellow">
+            <div style="width:100%;height:60px;border-bottom:1px solid">
+                <p style="text-align:center;font-size:21px;margin-top:8px"><i class="fa fa-spa" style="color:red;margin-top:12px"></i>  Meta de leitura 2024</p>
+            </div>
+            <div class="row gap-4" id="idMetaBooks" style="transform:translate(0%,-0%)">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-1.9.1.js"></script>
+
+<script>
+    var elem = document.getElementById("id_searchBooks");
+    elem.onkeyup = function (e) {
+        if (e.keyCode == 13) {
+            srcBooks();
+        }
+    }
+    function openAccountSetting() {
+        var div = document.getElementById("divAccountSetting");
+        if (div.style.display === "none") {
+            div.style.display = "block"
+        }
+        else {
+            div.style.display = "none"
+        }
+    }
+
+    function changeAccount(login) {
+        var formData = new FormData();
+        formData.append("login", login);
+        $.ajax(
+            {
+                url: '@Url.Action("changeAccount", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    window.location.reload()
+                }
+            });
+    }
+    $(document).ready(function () {
+        var formData = new FormData();
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialMetaBooks", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $("#idMetaBooks").html(result);
+                }
+            });
+    });
+    $(document).on("click", ".pagination a", function (e) {
+        e.preventDefault();
+        var url = $(this).attr("href");
+        $("#idMetaBooks").load(url);
+    });
+
+    function srcBooks() {
+        window.location.href = '@Url.Action("SearchBooks", "Books")?name=' + $("#id_searchBooks").val();
+    }
+    function openDivEdit() {
+        var div = document.querySelector("#id_changeImg");
+        if (div.style.display === "none") {
+            div.style.display = "inline-flex"
+        }
+    }
+    function exitDivEdit() {
+        var div = document.querySelector("#id_changeImg");
+        if (div.style.display === "inline-flex") {
+            div.style.display = "none"
+        }
+    }
+    function saveImgProfile(id){
+        var formData = new FormData();
+        formData.append("imagem", $("#id_imgProfile")[0].files[0]);
+        $.ajax(
+            {
+                url: '@Url.Action("saveImgProfile", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                }
+            });
+    }
+
+    function OpenViewAuthors(){
+        window.location.href = '@Url.Action("Books", "AuthorsProfile");
+    }
+
+    var i=0;
+    function Phrase(){
+        var formData = new FormData();
+        formData.append("cont", i);
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialPhraseBook", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $("#id_partialFrase").html(result);
+                }
+            });
+    }
+    Phrase();
+</script>
+
+<style>
+    input {
+        width: 20%;
+        height: 50%;
+        margin-top: 14px;
+        margin-left: 39%;
+        border-radius: 25px;
+        font-size: 20px;
+        padding: 8px 40px 8px 20px;
+        border: none;
+    }
+
+        input:focus {
+            outline: none;
+        }
+
+    button {
+        top: 0;
+        right: 0;
+        width: -0px;
+        margin-left: -50px;
+        height: 100%;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+        background: none;
+        font-size: 18px;
+    }
+
+        button i {
+            color: rgb(93, 94, 95);
+        }
+
+        button:hover i {
+            color: rgb(162, 163, 163);
+        }
+</style>

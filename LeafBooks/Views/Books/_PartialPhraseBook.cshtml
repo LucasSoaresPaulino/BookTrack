@@ -1,0 +1,60 @@
+﻿@model LeafBooks.DTO.LivrosDTO
+<i class="fa fa-chevron-left" id="proximo" onclick="PreviewPhrase()" style="position:absolute;height:40px;transform:translate(-120%,150%)"></i>
+<i class="fa fa-chevron-right" id="anterior" onclick="nextPhrase()" style="position:absolute;height:40px;transform:translate(1300%,150%)"></i>
+
+<div style="padding:5px">
+    @for(int i=0; i <= Model.listFrase.Count-1; i++)
+    {
+        string classe = Convert.ToString(i);
+        
+        <div class="@classe item">
+            <p>@Model.listFrase[i].frase</p>
+            <p>@Model.listFrase[i].livro</p>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+
+        <script>
+            var itens = document.querySelectorAll(".item"); // Obtém todos os itens
+            var currentIndex = 0; // Índice do item atual
+
+            function mostrarItem(index) {
+                // Esconde todos os itens
+                itens.forEach(function (item) {
+                    item.classList.remove("ativo");
+                });
+                // Exibe o item na posição index
+                itens[index].classList.add("ativo");
+            }
+            mostrarItem(currentIndex);
+
+            function nextPhrase()  {
+                currentIndex = (currentIndex + 1) % itens.length; // Encontra o próximo item
+                mostrarItem(currentIndex);
+            }
+
+            // Retrocede para o item anterior
+            function PreviewPhrase() {
+                currentIndex = (currentIndex - 1 + itens.length) % itens.length; // Encontra o item anterior
+                mostrarItem(currentIndex);
+            }
+        </script>
+
+        <style>
+            .item {
+                display: none; /* Esconde todos os itens por padrão */
+                transition: left 0.5s ease; /* Animar a transição da propriedade left */
+            }
+
+                .item.ativo {
+                    display: block; /* Exibe apenas o item ativo */
+                    left: 0; /* Garante que o item ativo esteja na posição inicial */
+                }
+
+                .item.anterior {
+                    left: -100%; /* Move o item para a esquerda (fora do contêiner) */
+                }
+        </style>
+    }
+</div>
+

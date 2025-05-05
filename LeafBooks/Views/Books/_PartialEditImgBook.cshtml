@@ -1,0 +1,34 @@
+﻿@model LeafBooks.DTO.BooksDTO.Temperatures
+
+@foreach (var item in Model.Items)
+{
+    <div style="display:block; margin-top:6%">
+        @if(item.VolumeInfo.ImageLinks != null)
+        {
+            <div style="display:flex;margin-top:2%">
+                <img class="card" src="@item.VolumeInfo.ImageLinks.Thumbnail" onclick="valueImg('@item.VolumeInfo.ImageLinks.Thumbnail', this)" style="width:90px;height:150px;cursor: pointer;transition:transform 0.3s ease">
+                <div style="display:block">
+                    <p style="color:white;font-weight:bold ;margin-left:15px;margin-top:1px;font-size:15px;white-space:nowrap;white-space:nowrap;max-width:38ch;overflow: hidden;">@item.VolumeInfo.Title</p>
+                    <br>
+                    <p style="color:white; margin-left:20px;margin-top:-35px">@item.VolumeInfo.Authors[0]</p>
+
+                </div>
+            </div>
+            <br />
+        }
+    </div>
+}
+
+<script>
+    function valueImg(image,elemento){
+        $("#id_valueBookImg").val(image);
+        elemento.classList.toggle('ativo');
+
+    }
+</script>
+<style>
+    .ativo{
+        transform: scale(1.1);
+    }
+</style>
+        

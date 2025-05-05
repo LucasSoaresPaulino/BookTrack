@@ -1,0 +1,160 @@
+﻿@model LeafBooks.DTO.BooksDTO.Temperatures
+<html>
+<head>
+    <meta charset="UTF-8">
+</head>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<body style="background-image:url('@Url.Content("~/img/Books/Background/backLivro.png")');">
+    <div class="row justify-content-center w-40" style="margin-top:9%; display:inline-block; background-color:#FDF3DD; transform:translate(20%,0%);width:74%;border-radius:7px;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;">
+        @foreach (var item in Model.Items)
+        {
+            if (item.VolumeInfo.Authors != null)
+            {
+                if (item.VolumeInfo.lingua == "pt-BR" || item.VolumeInfo.lingua == "en")
+                {
+                    string image = "";
+                    string id = "id_OptionsSave_" + item.Id;
+
+                    <div style="display:flex;margin-bottom:10px; padding:20px; border-bottom:1px solid #d3d3d3 ">
+                        @if (item.VolumeInfo.ImageLinks != null)
+                        {
+                            image = item.VolumeInfo.ImageLinks.Thumbnail;
+                            <img class="card" src="@image" onclick="OpenBook('@item.Id')" style="width:130px;height:189px">
+                        }
+                        else
+                        {
+                            image = "~/img/Books/Book.gif";
+                            <img class="card" src="~/img/Books/Book.gif" onclick="OpenBook('@item.Id')" style="width:130px;height:189px">
+                        }
+                        <div style="display:block">
+                            <p style="color:#222222;font-weight:bold ;margin-left:20px;font-size:19px;white-space:nowrap;white-space:nowrap;max-width:52.5ch;overflow: hidden;">@item.VolumeInfo.Title</p>
+                            <br>
+                            @if (item.VolumeInfo.Authors != null)
+                            {
+                                <p style="color:black; margin-left:20px;margin-top:-35px">@item.VolumeInfo.Authors[0]</p>
+                            }
+                            <br>
+                            @if (item.VolumeInfo.PublishedDate.Length != 4 && item.VolumeInfo.PublishedDate != "")
+                            {
+                                <p style="color:black; margin-left:20px;margin-top:60px"> ano de publicação: @item.VolumeInfo.PublishedDate.Substring(0,4)</p>
+                            }
+                        </div>
+                        @* <div style="display:inline-flex;margin-left:82%;position:absolute">
+                            <i class="fa-regular fa-bookmark" id="bookmark" onclick="saveBooks('@item.Id','@image','@item.VolumeInfo.Authors[0]','@ViewBag.AutorInfo.imagem',1)" style="width:40px;height:25px;"></i>
+                            <i class="fa-regular fa-heart" id="heart" onclick="saveBooks('@item.Id','@image','@item.VolumeInfo.Authors[0]','@ViewBag.AutorInfo.imagem',2)" style="width:40px;height:25px;"></i>
+                            <i class="fa fa-book-open" id="bookOpen" onclick="saveBooks('@item.Id','@image','@item.VolumeInfo.Authors[0]','@ViewBag.AutorInfo.imagem',3)" style="width:40px;height:25px"></i>
+                        </div> *@
+                        <div id="@id" style="margin-left:80%;cursor:pointer;position:absolute">
+                            <script>
+                                function loadOptionsSave(titulo) {
+                                    var id = "@id";
+                                    var teste = "@item.VolumeInfo.Title";
+
+                                    var textarea = document.createElement("textarea");
+                                    textarea.innerHTML = teste;
+
+                                    var formData = new FormData();
+                                    formData.append("id", "@item.Id");
+                                    formData.append("titulo", textarea.value);
+                                    formData.append("imagem", "@image");
+                                    formData.append("autor", "@item.VolumeInfo.Authors[0]");
+                                    formData.append("imgAutor", "@ViewBag.AutorInfo.imagem");
+                                    $.ajax(
+                                        {
+                                            url: '@Url.Action("_PartialOptionsSave", "Books")',
+                                            type: 'POST',
+                                            data: formData,
+                                            processData: false,
+                                            contentType: false,
+                                            success: function (result) {
+                                                $("#" + id + "").html(result);
+                                            }
+                                        });
+                                }
+                                loadOptionsSave();
+                            </script>
+                        </div>
+                    </div>
+                }
+            }
+        }
+        <nav style="margin-left:38%; margin-top:20px">
+            <ul class="pagination">
+                <li class="page-item">
+                    <a class="page-link">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item"><a class="page-link" onclick="nextPage(0)" href="#">1</a></li>
+                @for (int i = 1; i <= 4; i++)
+                {
+                    int a = i + 1;
+                    <li class="page-item"><a class="page-link" onclick="nextPage(@i)" href="#">@a</a></li>
+                }
+                <li class="page-item">
+                    <a class="page-link">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</body>
+</html>
+
+<script>
+    function nextPage(page) {
+        var name = '@ViewBag.pesquisa';
+        window.location.href = '@Url.Action("SearchBooks", "Books")?name=' + name + '&pagina=' + page;
+    }
+    function OpenBook(id) {
+        window.location.href = '@Url.Action("pageBook", "Books")?id=' + id;
+    }
+    function saveBooks(id, imagem, autor, imgAutor, tipo) {
+        if (imagem == 1 || imagem == 2 || imagem == 3) {
+            tipo = imagem;
+            imagem = "";
+        }
+        var formData = new FormData();
+        formData.append("id", id);
+        formData.append("imagem", imagem);
+        formData.append("autor", autor);
+        formData.append("imgAutor", imgAutor);
+        formData.append("tipo", tipo);
+
+        $.ajax(
+            {
+                url: '@Url.Action("saveBook", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                }
+            });
+    }
+</script>
+
+<style>
+    .card:hover {
+        cursor: pointer;
+        -webkit-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        transform: scale(1.1);
+    }
+
+    #bookmark:hover {
+        color: #f1af09;
+    }
+
+    #heart:hover {
+        color: red
+    }
+
+    #bookOpen:hover {
+        color: violet
+    }
+</style>

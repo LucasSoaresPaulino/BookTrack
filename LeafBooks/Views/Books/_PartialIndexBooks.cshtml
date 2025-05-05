@@ -1,0 +1,167 @@
+﻿@model X.PagedList.IPagedList<LeafBooks.DTO.BooksIndex>
+@using X.PagedList
+@using X.PagedList.Mvc.Bootstrap4.Core
+@using X.PagedList.Mvc.Core
+@using X.PagedList.Web.Common
+
+<div class="card" style="width:908px;height:50px; background-color:rgba(0,0,0,.4);position:absolute;transform:translate(-6.6%,-140%);border-bottom-left-radius:0px;border-bottom-right-radius:0px;border-bottom:1px solid #d3d3d3">
+    @if (Model[0].situacao == 1)
+    {
+        <b style="text-align:center;font-size:20px;margin-top:5px;color:white"><i class="fa-regular fa-bookmark" style="transform:translate(0%,5%);margin-right:5px;color:#f1af09"></i>Lidos</b>
+    }
+</div>
+@*<div style="position:absolute;display:flex;margin-top:23px;max-width:300px">
+    <label onclick="openSelect()" style="color:#0d6efd;text-decoration:underline;cursor:pointer">Ordernar por ano</label>
+    <div id="mySelect" style="display:none; position:fixed;z-index:8;background-color:red;width:123px;margin-top:25px;border-bottom-left-radius:9px;border-bottom-right-radius:9px">
+        <p style="text-align:center;">1</p>
+        <p style="text-align:center;">1</p>
+        <p style="text-align:center;">1</p>
+        <p style="text-align:center;">1</p>
+        <p style="text-align:center;">1</p>
+    </div>
+    <p style="margin-left:25px;color:#0d6efd;text-decoration:underline;cursor:pointer">ordernar por:</p>
+</div>*@
+<div>
+    <div class="input-group" style="margin-bottom:5px; margin-top:12px;margin-left:11px">
+        <div class="form-outline" style="margin-top:-12px;margin-left:62%;">
+            <input type="search" id="btnSearch" class="form-control" placeholder="Pesquisar" style="height:40px;border-top-right-radius:0px;background-color:RGB(221,221,255)" />
+            <label class="form-label" for="form1"></label>
+        </div>
+        <button type="button" class="btn btn-primary" onclick="searchBook()" style="height:40px;width:40px;transform:translate(112%,0%);margin-top:2px">
+            <i class="fas fa-search" style="align-items:center;border-top-left-radius:0px"></i>
+        </button>
+    </div>
+</div>
+
+@foreach (var item in Model)
+{
+    string id = "id_Edit" + item.id;
+    string idBook = "id_Book" + item.id;
+
+    <div onmouseover="openDivEdit('@item.id')" onmouseleave="exitDivEdit('@item.id')" title="@item.nome" style="width:130px; height:189px; background-size:cover; background-repeat:no-repeat;box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px; border:none;margin-left:8px;margin-top:5px">
+        @if (item.imagem != "")
+        {
+            <img class="books" id="@idBook" onclick="OpenBook('@item.id')" src="@item.imagem" style="width:130px; height:189px;margin-left:-12px;position:absolute;z-index:0">
+        }
+        else
+        {
+            <img class="books" id="@idBook" onclick="OpenBook('@item.id')" src="/img/Books/Book.gif" style="width:130px; height:189px;margin-left:-12px;position:absolute;z-index:0">
+        }
+        <i class="fa fa-pen-to-square" id="@id" onclick="openModalEdit('@item.id','@item.nome','@item.imagem','@item.autor')" style="transform:translate(270%,0%);color:darkviolet;width:30px;height:30px;display:none;position:absolute"></i>
+    </div>
+}
+
+<div class="" style="position:relative;transform:translate(39%,100%)">
+    <div>
+        @Html.PagedListPager(Model,page => Url.Action("_PartialIndexBooks", new {pagina = page, categoria = ViewBag.categoria}), Bootstrap4PagedListRenderOptions.Classic)
+    </div>
+</div>
+
+<div class="modal" id="modalEdit" role="dialog" data-backdrop="static" style="margin-top:3%">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#222222; border-color:black">
+                <span class="glyphicon glyphicon-pencil"></span>
+                <label class="modal-title"><b style="color:white;text-align:left">Configurar preferencias</b></label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="border:none;background-color:#222222">
+                    <span aria-hidden="true" onclick="window.location.reload();" style="background-color:transparent; color:white"><i class="fa fa-x"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="height:38.5vh; overflow-y: auto;background-color:#222222">
+                <div id="id_partialEdit"></div>
+                <input type="hidden" id="id_idBookValue" />
+                <input type="hidden" id="id_nameBookValue" />
+                <input type="hidden" id="id_imagemBookValue" />
+                <input type="hidden" id="id_autorBookValue" />
+            </div>
+
+            <div class="modal-footer" style="background-color:#222222;border-color:black">
+                <button type="button" class="btn btn-primary" onclick="saveEdit()" style="width:15%"><b>Salvar</b></button>
+                <button type="button" class="btn btn-secondary" onclick="$('#modalEdit').modal('hide')" style="width:15%"><b>Fechar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    var elem = document.getElementById("btnSearch");
+    elem.onkeyup = function (e) {
+        if (e.keyCode == 13) {
+            searchBook();
+        }
+    }
+    function openSelect(){
+        var mySelect = document.getElementById('mySelect');
+        if (mySelect.style.display === 'none') {
+            mySelect.style.display = 'block';
+        } else {
+            mySelect.style.display = 'none';
+        }
+    }
+    function OpenBook(id) {
+        window.location.href = '@Url.Action("pageBook", "Books")?id=' + id;
+    }
+    function openDivEdit(id) {
+        var div = document.querySelector("#id_Edit" + id + "");
+        if (div.style.display === "none") {
+            div.style.display = "inline-flex"
+        }
+    }
+    function exitDivEdit(id) {
+        var div = document.querySelector("#id_Edit" + id + "");
+        if (div.style.display === "inline-flex") {
+            div.style.display = "none"
+        }
+    }
+    function openModalEdit(id,nome,imagem,autor) {
+        $("#modalEdit").modal('show');
+        $("#id_idBookValue").val(id);
+        $("#id_nameBookValue").val(nome);
+        $("#id_imagemBookValue").val(imagem);
+        $("#id_autorBookValue").val(autor);
+
+        var formData = new FormData();
+        formData.append("id", id);
+
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialEditBook", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $("#id_partialEdit").html(result);
+                }
+            });
+    }
+    function searchBook(){
+        var formData = new FormData();
+        formData.append("search", $("#btnSearch").val());
+
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialIndexBooks", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    $("#divBooks").html(result);
+                }
+            });
+    }    
+</script>
+
+<style>
+    .books {
+        -webkit-filter: grayscale(0%);
+    }
+
+        .books:hover {
+            -webkit-filter: grayscale(100%);
+            transition: 1s;
+        }
+</style>

@@ -1,0 +1,198 @@
+﻿@model LeafBooks.DTO.BooksIndex
+
+<div>
+    <div>
+        <p style="color:white">Ano de leitura</p>
+        <textarea id="id_anoLeitura" placeholder="Digite aqui" style="170px;height:33px;border-radius:3px"></textarea>
+    </div>
+
+    <div style="margin-top:15px">
+        <p style="color:white">Marcar livro como:</p>
+        <div style="margin-left:3px">
+            <i class="fa fa-hand-holding-heart" id="id_4" name="nameIcon" onclick="IconClick(this.id)" style="color:white;height:25px">4</i>
+            <i class="fa fa-book-bookmark" id="id_5" name="nameIcon" onclick="IconClick(this.id)" style="color:white;margin-left:10px;height:25px">5</i>
+            <i class="fa fa-spa" id="id_6" name="nameIcon" onclick="IconClick(this.id)" style="color:white;margin-left:10px;height:25px">6</i>
+            <input type="hidden" id="id_iconValue" />
+        </div>
+    </div>
+
+    <div style="margin-top:15px">
+        <p style="color:white">Customizar imagem</p>
+        <button class="btn btn-primary" onclick="addImgBookInteligent('@Model.nome','@Model.id')" style="position:absolute;left:95.5%;top:50% ;width:40px;height:40px"><i class="fa fa-file-circle-plus" style="color:white"></i></button>
+    </div>
+
+    <div style="margin-top:15px">
+        <b>Imagem:</b><br />
+        <label for="file" class=" file-style" style="margin-top:5px">
+            <img src="~/img/Dispensa/Icons/icons8-upload-to-cloud-color.png" id="id_imgCatalogo" width="50" style="color">
+            <p style="color:white">Upload Photo</p>
+        </label>
+        <input type="file" id="file" onchange="changeImg()">
+    </div>
+</div>
+
+<div class="modal" id="modalImgItlg" role="dialog" data-backdrop="static" style="margin-top:3%">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header" style="background-color:#222222; border-color:black">
+                <span class="glyphicon glyphicon-pencil"></span>
+                <label class="modal-title"><b style="color:white;text-align:left">Configurar preferencias</b></label>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="border:none;background-color:#222222">
+                    <span aria-hidden="true" onclick="window.location.reload();" style="background-color:transparent; color:white"><i class="fa fa-x"></i></span>
+                </button>
+            </div>
+
+            <div class="modal-body" style="height:38.5vh; overflow-y: auto;background-color:#222222">
+                <div>
+                    <div class="input-group" style="">
+                        <div class="form-outline" style="margin-top:-12px;margin-left:150px;">
+                            <input type="search" id="btnSearch" class="form-control" onkeyup="searchImgBook()" placeholder="Pesquisar" style="height:33px;border-top-right-radius:0px;background-color:RGB(221,221,255)" />
+                            <label class="form-label" for="form1"></label>
+                        </div>
+                        <button type="button" class="btn btn-primary" style="height:34.5px;width:40px;margin-left:43px;margin-top:1px">
+                            <i class="fas fa-search" style="align-items:center;border-top-left-radius:0px"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="id_partialEditImg"></div>
+                <input type="hidden" id="id_valueBookImg" />
+            </div>
+
+            <div class="modal-footer" style="background-color:#222222;border-color:black">
+                <button type="button" class="btn btn-primary" onclick="saveEditItlgImage('@Model.id')" style="width:15%"><b>Salvar</b></button>
+                <button type="button" class="btn btn-secondary" onclick="$('#modalImgItlg').modal('hide')" style="width:15%"><b>Fechar</b></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function addImgBookInteligent(nome,id){
+        var formData = new FormData();
+        formData.append("nome", nome);
+        formData.append("id", id);
+
+        $.ajax(
+            {
+                url: '@Url.Action("saveImgInteligent", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (result) {
+                    if(result == "error"){
+                        $("#modalImgItlg").modal('show');
+                        var formData = new FormData();
+                        formData.append("id", id);
+
+                        $.ajax(
+                            {
+                                url: '@Url.Action("_PartialEditImgBook", "Books")',
+                                type: 'POST',
+                                data: formData,
+                                processData: false,
+                                contentType: false,
+                                success: function (response) {
+                                    $("#id_partialEditImg").html(response);
+                                }
+                            });
+                    }else{
+                        alert("não foi");
+                    }
+                }
+            });
+    }
+    function searchImgBook() {
+        var formData = new FormData();
+        formData.append("search", $("#btnSearch").val());
+
+        $.ajax(
+            {
+                url: '@Url.Action("_PartialEditImgBook", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    $("#id_partialEditImg").html(response);
+                }
+            });
+    }
+    function saveEditItlgImage(id){
+        var formData = new FormData();
+        formData.append("nome", $("#id_valueBookImg").val());
+        formData.append("id", id);
+        formData.append("tipo", 1);
+
+        $.ajax(
+            {
+                url: '@Url.Action("saveImgInteligent", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                }
+            });
+    }
+    var idsClicados = [];
+
+    function IconClick(id) {
+        if (idsClicados.includes(id)) {
+
+            var index = idsClicados.indexOf(id);
+            if (index !== -1) {
+                idsClicados.splice(index, 1);
+            }
+            document.querySelector("#" + id + "").style.color = "white";
+        } else {
+            idsClicados.push(id);
+            document.querySelector("#" + id + "").style.color = "#f1af09";
+        }
+    }
+    function saveEdit() {
+        var formData = new FormData();
+        formData.append("idBook", $("#id_idBookValue").val());
+        formData.append("name", $("#id_nameBookValue").val());
+        formData.append("imagem", $("#id_imagemBookValue").val());
+        formData.append("autor", $("#id_autorBookValue").val());
+        formData.append("ano", $("#id_anoLeitura").val());
+        formData.append("tipo", idsClicados);
+
+        $.ajax(
+            {
+                url: '@Url.Action("SavePrefBook", "Books")',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                }
+            });
+    }
+    
+</script>
+
+<style>
+    #file {
+        display: none;
+    }
+
+    .file-style {
+        font-family: 'Trebuchet MS';
+        width: 400px;
+        display: block;
+        background-color: #222222;
+        margin: auto;
+        cursor: pointer;
+        text-align: center;
+        padding: 20px;
+        border-radius: 15px;
+        border: 2px dashed #cdc8c8;
+    }
+
+/*        .file-style:hover {
+        }
+        }*/
+</style>

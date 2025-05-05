@@ -361,3 +361,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/LeafBooks/appsettings.json
+/LeafBooks/appsettings.Development.json
+/LeafBooks/Program.cs
+/LeafBooks/Startup.cs
+/Generico/Conexao.cs
